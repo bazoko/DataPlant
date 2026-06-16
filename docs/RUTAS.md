@@ -86,6 +86,38 @@ Funcion: validar y guardar una medicion.
 
 Acceso: `admin`, `carga`.
 
+### GET /mediciones/{medicion}/edit
+
+Controlador: `MedicionController`
+
+Metodo: `edit()`
+
+Funcion: mostrar formulario de edicion de una medicion.
+
+Vista: `mediciones/edit.blade.php`
+
+Acceso: `admin`.
+
+### PUT /mediciones/{medicion}
+
+Controlador: `MedicionController`
+
+Metodo: `update()`
+
+Funcion: validar y actualizar una medicion.
+
+Acceso: `admin`.
+
+### DELETE /mediciones/{medicion}
+
+Controlador: `MedicionController`
+
+Metodo: `destroy()`
+
+Funcion: eliminar una medicion.
+
+Acceso: `admin`.
+
 ## Inspecciones
 
 ### GET /inspecciones
@@ -121,3 +153,35 @@ Metodo: `store()`
 Funcion: validar y guardar una inspeccion.
 
 Acceso: `admin`, `carga`.
+
+### GET /inspecciones/{inspeccion}/edit
+
+Controlador: `InspeccionController`
+
+Metodo: `edit()`
+
+Funcion: mostrar formulario de edicion de una inspeccion.
+
+Vista: `inspecciones/edit.blade.php`
+
+Acceso: `admin`.
+
+### PUT /inspecciones/{inspeccion}
+
+Controlador: `InspeccionController`
+
+Metodo: `update()`
+
+Funcion: validar y actualizar una inspeccion.
+
+Acceso: `admin`.
+
+### DELETE /inspecciones/{inspeccion}
+
+Controlador: `InspeccionController`
+
+Metodo: `destroy()`
+
+Funcion: eliminar una inspeccion.
+
+Acceso: `admin`.

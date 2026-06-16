@@ -41,4 +41,34 @@ class MedicionController extends Controller
             ->route('mediciones.index')
             ->with('status', 'Medicion guardada correctamente.');
     }
+
+    public function edit(Medicion $medicion): View
+    {
+        return view('mediciones.edit', compact('medicion'));
+    }
+
+    public function update(Request $request, Medicion $medicion): RedirectResponse
+    {
+        $data = $request->validate([
+            'fecha' => ['required', 'date'],
+            'turno' => ['required', 'in:manana,tarde,noche'],
+            'valor' => ['required', 'numeric'],
+            'observacion' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $medicion->update($data);
+
+        return redirect()
+            ->route('mediciones.index')
+            ->with('status', 'Medicion actualizada correctamente.');
+    }
+
+    public function destroy(Medicion $medicion): RedirectResponse
+    {
+        $medicion->delete();
+
+        return redirect()
+            ->route('mediciones.index')
+            ->with('status', 'Medicion eliminada correctamente.');
+    }
 }

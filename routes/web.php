@@ -22,6 +22,15 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/mediciones', [MedicionController::class, 'store'])
         ->middleware('role:admin,carga')
         ->name('mediciones.store');
+    Route::get('/mediciones/{medicion}/edit', [MedicionController::class, 'edit'])
+        ->middleware('role:admin')
+        ->name('mediciones.edit');
+    Route::put('/mediciones/{medicion}', [MedicionController::class, 'update'])
+        ->middleware('role:admin')
+        ->name('mediciones.update');
+    Route::delete('/mediciones/{medicion}', [MedicionController::class, 'destroy'])
+        ->middleware('role:admin')
+        ->name('mediciones.destroy');
 
     Route::get('/inspecciones', [InspeccionController::class, 'index'])->name('inspecciones.index');
     Route::get('/inspecciones/create', [InspeccionController::class, 'create'])
@@ -30,4 +39,13 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/inspecciones', [InspeccionController::class, 'store'])
         ->middleware('role:admin,carga')
         ->name('inspecciones.store');
+    Route::get('/inspecciones/{inspeccion}/edit', [InspeccionController::class, 'edit'])
+        ->middleware('role:admin')
+        ->name('inspecciones.edit');
+    Route::put('/inspecciones/{inspeccion}', [InspeccionController::class, 'update'])
+        ->middleware('role:admin')
+        ->name('inspecciones.update');
+    Route::delete('/inspecciones/{inspeccion}', [InspeccionController::class, 'destroy'])
+        ->middleware('role:admin')
+        ->name('inspecciones.destroy');
 });

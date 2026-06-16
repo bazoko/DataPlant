@@ -55,8 +55,10 @@ Vistas actuales:
 - `home.blade.php`
 - `mediciones/index.blade.php`
 - `mediciones/create.blade.php`
+- `mediciones/edit.blade.php`
 - `inspecciones/index.blade.php`
 - `inspecciones/create.blade.php`
+- `inspecciones/edit.blade.php`
 
 ## routes
 

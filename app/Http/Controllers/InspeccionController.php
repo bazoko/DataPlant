@@ -41,4 +41,34 @@ class InspeccionController extends Controller
             ->route('inspecciones.index')
             ->with('status', 'Inspeccion guardada correctamente.');
     }
+
+    public function edit(Inspeccion $inspeccion): View
+    {
+        return view('inspecciones.edit', compact('inspeccion'));
+    }
+
+    public function update(Request $request, Inspeccion $inspeccion): RedirectResponse
+    {
+        $data = $request->validate([
+            'fecha' => ['required', 'date'],
+            'sector' => ['required', 'string', 'max:100'],
+            'estado' => ['required', 'in:correcto,observado,critico'],
+            'observacion' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $inspeccion->update($data);
+
+        return redirect()
+            ->route('inspecciones.index')
+            ->with('status', 'Inspeccion actualizada correctamente.');
+    }
+
+    public function destroy(Inspeccion $inspeccion): RedirectResponse
+    {
+        $inspeccion->delete();
+
+        return redirect()
+            ->route('inspecciones.index')
+            ->with('status', 'Inspeccion eliminada correctamente.');
+    }
 }

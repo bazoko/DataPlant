@@ -16,6 +16,8 @@
         .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
         .btn { display: inline-block; background: #2563eb; color: white; padding: 9px 12px; text-decoration: none; border: 0; cursor: pointer; }
         .btn.secondary { background: #475569; }
+        .btn.danger { background: #b91c1c; }
+        .inline-form { display: inline; }
         table { width: 100%; border-collapse: collapse; background: white; }
         th, td { border: 1px solid #d7dde7; padding: 10px; text-align: left; vertical-align: top; }
         th { background: #e8edf5; }

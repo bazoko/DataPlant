@@ -53,6 +53,8 @@ Puede:
 
 - Ver datos.
 - Crear datos.
+- Editar datos.
+- Eliminar datos.
 - Acceder a todos los modulos actuales.
 
 ### Carga
@@ -66,6 +68,8 @@ Puede:
 No puede:
 
 - Administrar usuarios.
+- Editar registros.
+- Eliminar registros.
 
 ### Consulta
 
