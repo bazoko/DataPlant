@@ -24,6 +24,7 @@ Archivos actuales:
 - `app/Http/Controllers/HomeController.php`
 - `app/Http/Controllers/MedicionController.php`
 - `app/Http/Controllers/InspeccionController.php`
+- `app/Http/Controllers/UsuarioController.php`
 
 ### Http/Middleware
 
@@ -59,6 +60,9 @@ Vistas actuales:
 - `inspecciones/index.blade.php`
 - `inspecciones/create.blade.php`
 - `inspecciones/edit.blade.php`
+- `usuarios/index.blade.php`
+- `usuarios/create.blade.php`
+- `usuarios/edit.blade.php`
 
 ## routes
 

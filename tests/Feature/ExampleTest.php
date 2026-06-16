@@ -228,4 +228,66 @@ class ExampleTest extends TestCase
             ->assertSee('Visible')
             ->assertDontSee('Oculta');
     }
+
+    public function test_admin_can_create_and_update_users(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post('/usuarios', [
+                'name' => 'Operador',
+                'email' => 'operador@example.com',
+                'password' => 'password',
+                'role' => 'carga',
+            ])
+            ->assertRedirect('/usuarios');
+
+        $usuario = User::where('email', 'operador@example.com')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->put("/usuarios/{$usuario->id}", [
+                'name' => 'Operador Consulta',
+                'email' => 'operador@example.com',
+                'password' => '',
+                'role' => 'consulta',
+            ])
+            ->assertRedirect('/usuarios');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $usuario->id,
+            'name' => 'Operador Consulta',
+            'role' => 'consulta',
+        ]);
+    }
+
+    public function test_non_admin_cannot_manage_users(): void
+    {
+        $carga = User::factory()->create(['role' => 'carga']);
+
+        $this->actingAs($carga)
+            ->get('/usuarios')
+            ->assertForbidden();
+
+        $this->actingAs($carga)
+            ->post('/usuarios', [
+                'name' => 'Sin permiso',
+                'email' => 'sinpermiso@example.com',
+                'password' => 'password',
+                'role' => 'consulta',
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_admin_cannot_delete_own_user(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->delete("/usuarios/{$admin->id}")
+            ->assertRedirect('/usuarios');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $admin->id,
+        ]);
+    }
 }

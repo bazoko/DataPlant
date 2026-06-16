@@ -71,6 +71,7 @@ Puede:
 - Editar datos.
 - Eliminar datos.
 - Acceder a todos los modulos actuales.
+- Administrar usuarios y roles.
 
 ### Carga
 
@@ -85,6 +86,14 @@ No puede:
 - Administrar usuarios.
 - Editar registros.
 - Eliminar registros.
+
+## Flujo de administracion de usuarios
+
+1. El usuario `admin` entra a la seccion Usuarios.
+2. Puede crear usuarios nuevos con nombre, email, contrasena y rol.
+3. Puede editar datos y cambiar roles.
+4. Puede eliminar usuarios.
+5. El sistema evita que el admin elimine su propio usuario.
 
 ### Consulta
 

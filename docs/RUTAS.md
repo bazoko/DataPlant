@@ -198,3 +198,71 @@ Metodo: `destroy()`
 Funcion: eliminar una inspeccion.
 
 Acceso: `admin`.
+
+## Usuarios
+
+### GET /usuarios
+
+Controlador: `UsuarioController`
+
+Metodo: `index()`
+
+Funcion: listar usuarios del sistema.
+
+Vista: `usuarios/index.blade.php`
+
+Acceso: `admin`.
+
+### GET /usuarios/create
+
+Controlador: `UsuarioController`
+
+Metodo: `create()`
+
+Funcion: mostrar formulario de nuevo usuario.
+
+Vista: `usuarios/create.blade.php`
+
+Acceso: `admin`.
+
+### POST /usuarios
+
+Controlador: `UsuarioController`
+
+Metodo: `store()`
+
+Funcion: validar y crear un usuario.
+
+Acceso: `admin`.
+
+### GET /usuarios/{usuario}/edit
+
+Controlador: `UsuarioController`
+
+Metodo: `edit()`
+
+Funcion: mostrar formulario de edicion de usuario.
+
+Vista: `usuarios/edit.blade.php`
+
+Acceso: `admin`.
+
+### PUT /usuarios/{usuario}
+
+Controlador: `UsuarioController`
+
+Metodo: `update()`
+
+Funcion: actualizar datos y rol de un usuario.
+
+Acceso: `admin`.
+
+### DELETE /usuarios/{usuario}
+
+Controlador: `UsuarioController`
+
+Metodo: `destroy()`
+
+Funcion: eliminar un usuario, excepto el usuario actualmente autenticado.
+
+Acceso: `admin`.

@@ -8,6 +8,7 @@ Aplicacion Laravel MVC para recoleccion y consulta de datos mediante formularios
 - Base de datos SQLite configurada.
 - Login de usuarios.
 - Roles basicos: `admin`, `carga`, `consulta`.
+- Gestion basica de usuarios para administradores.
 - Dos formularios funcionales:
   - Mediciones.
   - Inspecciones.

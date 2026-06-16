@@ -54,6 +54,9 @@
                 @if (auth()->user()->hasRole(['admin', 'carga']))
                     <a href="{{ route('inspecciones.create') }}">Nueva inspeccion</a>
                 @endif
+                @if (auth()->user()->hasRole('admin'))
+                    <a href="{{ route('usuarios.index') }}">Usuarios</a>
+                @endif
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit">Salir</button>

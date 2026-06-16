@@ -73,3 +73,25 @@ Validaciones principales:
 Archivo: `app/Http/Middleware/RoleMiddleware.php`
 
 Responsabilidad: permitir o bloquear rutas segun el rol del usuario autenticado.
+
+## UsuarioController
+
+Archivo: `app/Http/Controllers/UsuarioController.php`
+
+Responsabilidad: permitir que el administrador gestione usuarios y roles.
+
+Metodos:
+
+- `index()`: lista usuarios.
+- `create()`: muestra el formulario de alta.
+- `store()`: valida y crea usuario.
+- `edit()`: muestra formulario de edicion.
+- `update()`: actualiza nombre, email, rol y opcionalmente contrasena.
+- `destroy()`: elimina usuarios, excepto el usuario autenticado.
+
+Validaciones principales:
+
+- `name`: obligatorio, texto, maximo 255 caracteres.
+- `email`: obligatorio, formato email y unico.
+- `password`: obligatorio al crear, opcional al editar, minimo 6 caracteres.
+- `role`: obligatorio, valores permitidos `admin`, `carga`, `consulta`.
