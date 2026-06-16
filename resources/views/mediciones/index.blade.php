@@ -38,6 +38,10 @@
         </div>
     </form>
 
+    <div class="actions">
+        <a class="btn secondary" href="{{ route('mediciones.export', request()->query()) }}">Exportar CSV</a>
+    </div>
+
     <p class="muted">Registros encontrados: {{ $mediciones->count() }}</p>
 
     <table>

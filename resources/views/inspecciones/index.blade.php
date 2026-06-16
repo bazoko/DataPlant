@@ -42,6 +42,10 @@
         </div>
     </form>
 
+    <div class="actions">
+        <a class="btn secondary" href="{{ route('inspecciones.export', request()->query()) }}">Exportar CSV</a>
+    </div>
+
     <p class="muted">Registros encontrados: {{ $inspecciones->count() }}</p>
 
     <table>

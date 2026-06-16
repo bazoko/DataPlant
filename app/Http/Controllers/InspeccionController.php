@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InspeccionController extends Controller
 {
@@ -14,15 +15,34 @@ class InspeccionController extends Controller
     {
         $filters = $request->only(['fecha_desde', 'fecha_hasta', 'sector', 'estado']);
 
-        $inspecciones = Inspeccion::with('usuario')
-            ->when($filters['fecha_desde'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '>=', $fecha))
-            ->when($filters['fecha_hasta'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '<=', $fecha))
-            ->when($filters['sector'] ?? null, fn ($query, $sector) => $query->where('sector', 'like', "%{$sector}%"))
-            ->when($filters['estado'] ?? null, fn ($query, $estado) => $query->where('estado', $estado))
-            ->latest()
-            ->get();
+        $inspecciones = $this->filteredInspecciones($filters)->get();
 
         return view('inspecciones.index', compact('inspecciones', 'filters'));
+    }
+
+    public function export(Request $request): StreamedResponse
+    {
+        $filters = $request->only(['fecha_desde', 'fecha_hasta', 'sector', 'estado']);
+        $inspecciones = $this->filteredInspecciones($filters)->get();
+
+        return response()->streamDownload(function () use ($inspecciones): void {
+            $output = fopen('php://output', 'w');
+            fputcsv($output, ['fecha', 'sector', 'estado', 'observacion', 'cargado_por']);
+
+            foreach ($inspecciones as $inspeccion) {
+                fputcsv($output, [
+                    $inspeccion->fecha,
+                    $inspeccion->sector,
+                    $inspeccion->estado,
+                    $inspeccion->observacion,
+                    $inspeccion->usuario?->name,
+                ]);
+            }
+
+            fclose($output);
+        }, 'inspecciones.csv', [
+            'Content-Type' => 'text/csv',
+        ]);
     }
 
     public function create(): View
@@ -76,5 +96,18 @@ class InspeccionController extends Controller
         return redirect()
             ->route('inspecciones.index')
             ->with('status', 'Inspeccion eliminada correctamente.');
+    }
+
+    /**
+     * @param  array<string, string|null>  $filters
+     */
+    private function filteredInspecciones(array $filters)
+    {
+        return Inspeccion::with('usuario')
+            ->when($filters['fecha_desde'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '>=', $fecha))
+            ->when($filters['fecha_hasta'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '<=', $fecha))
+            ->when($filters['sector'] ?? null, fn ($query, $sector) => $query->where('sector', 'like', "%{$sector}%"))
+            ->when($filters['estado'] ?? null, fn ($query, $estado) => $query->where('estado', $estado))
+            ->latest();
     }
 }

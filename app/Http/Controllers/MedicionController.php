@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MedicionController extends Controller
 {
@@ -14,14 +15,34 @@ class MedicionController extends Controller
     {
         $filters = $request->only(['fecha_desde', 'fecha_hasta', 'turno']);
 
-        $mediciones = Medicion::with('usuario')
-            ->when($filters['fecha_desde'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '>=', $fecha))
-            ->when($filters['fecha_hasta'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '<=', $fecha))
-            ->when($filters['turno'] ?? null, fn ($query, $turno) => $query->where('turno', $turno))
-            ->latest()
-            ->get();
+        $mediciones = $this->filteredMediciones($filters)->get();
 
         return view('mediciones.index', compact('mediciones', 'filters'));
+    }
+
+    public function export(Request $request): StreamedResponse
+    {
+        $filters = $request->only(['fecha_desde', 'fecha_hasta', 'turno']);
+        $mediciones = $this->filteredMediciones($filters)->get();
+
+        return response()->streamDownload(function () use ($mediciones): void {
+            $output = fopen('php://output', 'w');
+            fputcsv($output, ['fecha', 'turno', 'valor', 'observacion', 'cargado_por']);
+
+            foreach ($mediciones as $medicion) {
+                fputcsv($output, [
+                    $medicion->fecha,
+                    $medicion->turno,
+                    $medicion->valor,
+                    $medicion->observacion,
+                    $medicion->usuario?->name,
+                ]);
+            }
+
+            fclose($output);
+        }, 'mediciones.csv', [
+            'Content-Type' => 'text/csv',
+        ]);
     }
 
     public function create(): View
@@ -75,5 +96,17 @@ class MedicionController extends Controller
         return redirect()
             ->route('mediciones.index')
             ->with('status', 'Medicion eliminada correctamente.');
+    }
+
+    /**
+     * @param  array<string, string|null>  $filters
+     */
+    private function filteredMediciones(array $filters)
+    {
+        return Medicion::with('usuario')
+            ->when($filters['fecha_desde'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '>=', $fecha))
+            ->when($filters['fecha_hasta'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '<=', $fecha))
+            ->when($filters['turno'] ?? null, fn ($query, $turno) => $query->where('turno', $turno))
+            ->latest();
     }
 }

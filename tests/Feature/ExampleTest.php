@@ -290,4 +290,62 @@ class ExampleTest extends TestCase
             'id' => $admin->id,
         ]);
     }
+
+    public function test_mediciones_export_respects_filters(): void
+    {
+        $consulta = User::factory()->create(['role' => 'consulta']);
+        Medicion::create([
+            'fecha' => '2026-06-12',
+            'turno' => 'manana',
+            'valor' => '11.00',
+            'observacion' => 'Exportada',
+            'user_id' => $consulta->id,
+        ]);
+        Medicion::create([
+            'fecha' => '2026-06-12',
+            'turno' => 'noche',
+            'valor' => '22.00',
+            'observacion' => 'No exportada',
+            'user_id' => $consulta->id,
+        ]);
+
+        $response = $this->actingAs($consulta)->get('/mediciones/exportar?turno=manana');
+        ob_start();
+        $response->baseResponse->sendContent();
+        $csv = ob_get_clean();
+
+        $response->assertOk();
+        $response->assertHeader('content-disposition', 'attachment; filename=mediciones.csv');
+        $this->assertStringContainsString('Exportada', $csv);
+        $this->assertStringNotContainsString('No exportada', $csv);
+    }
+
+    public function test_inspecciones_export_respects_filters(): void
+    {
+        $consulta = User::factory()->create(['role' => 'consulta']);
+        Inspeccion::create([
+            'fecha' => '2026-06-12',
+            'sector' => 'Deposito',
+            'estado' => 'correcto',
+            'observacion' => 'Exportada',
+            'user_id' => $consulta->id,
+        ]);
+        Inspeccion::create([
+            'fecha' => '2026-06-12',
+            'sector' => 'Planta',
+            'estado' => 'critico',
+            'observacion' => 'No exportada',
+            'user_id' => $consulta->id,
+        ]);
+
+        $response = $this->actingAs($consulta)->get('/inspecciones/exportar?estado=correcto');
+        ob_start();
+        $response->baseResponse->sendContent();
+        $csv = ob_get_clean();
+
+        $response->assertOk();
+        $response->assertHeader('content-disposition', 'attachment; filename=inspecciones.csv');
+        $this->assertStringContainsString('Exportada', $csv);
+        $this->assertStringNotContainsString('No exportada', $csv);
+    }
 }

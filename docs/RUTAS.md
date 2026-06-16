@@ -70,6 +70,16 @@ Filtros disponibles por query string:
 - `fecha_hasta`
 - `turno`
 
+### GET /mediciones/exportar
+
+Controlador: `MedicionController`
+
+Metodo: `export()`
+
+Funcion: exportar mediciones en formato CSV respetando los filtros aplicados.
+
+Acceso: `admin`, `carga`, `consulta`.
+
 ### GET /mediciones/create
 
 Controlador: `MedicionController`
@@ -144,6 +154,16 @@ Filtros disponibles por query string:
 - `fecha_hasta`
 - `sector`
 - `estado`
+
+### GET /inspecciones/exportar
+
+Controlador: `InspeccionController`
+
+Metodo: `export()`
+
+Funcion: exportar inspecciones en formato CSV respetando los filtros aplicados.
+
+Acceso: `admin`, `carga`, `consulta`.
 
 ### GET /inspecciones/create
 

@@ -13,6 +13,7 @@ Aplicacion Laravel MVC para recoleccion y consulta de datos mediante formularios
   - Mediciones.
   - Inspecciones.
 - Listados para consultar datos cargados.
+- Exportacion CSV de mediciones e inspecciones.
 - Navegacion simple entre pantallas.
 - Documentacion en `docs/`.
 

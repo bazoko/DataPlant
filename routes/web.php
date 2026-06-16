@@ -17,6 +17,7 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/mediciones', [MedicionController::class, 'index'])->name('mediciones.index');
+    Route::get('/mediciones/exportar', [MedicionController::class, 'export'])->name('mediciones.export');
     Route::get('/mediciones/create', [MedicionController::class, 'create'])
         ->middleware('role:admin,carga')
         ->name('mediciones.create');
@@ -34,6 +35,7 @@ Route::middleware('auth')->group(function (): void {
         ->name('mediciones.destroy');
 
     Route::get('/inspecciones', [InspeccionController::class, 'index'])->name('inspecciones.index');
+    Route::get('/inspecciones/exportar', [InspeccionController::class, 'export'])->name('inspecciones.export');
     Route::get('/inspecciones/create', [InspeccionController::class, 'create'])
         ->middleware('role:admin,carga')
         ->name('inspecciones.create');

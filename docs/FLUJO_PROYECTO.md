@@ -38,6 +38,14 @@ Usuarios de prueba:
 4. El controlador aplica los filtros sobre el modelo.
 5. La vista muestra solo los registros encontrados.
 
+## Flujo de exportacion CSV
+
+1. El usuario aplica filtros en un listado.
+2. Presiona Exportar CSV.
+3. Laravel recibe una solicitud `GET` con los mismos filtros.
+4. El controlador consulta los registros filtrados.
+5. El sistema descarga un archivo CSV con los datos encontrados.
+
 ## Flujo del dashboard
 
 1. El usuario ingresa al inicio.
