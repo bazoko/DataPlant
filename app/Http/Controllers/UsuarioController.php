@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actividad;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,7 +35,13 @@ class UsuarioController extends Controller
             'role' => ['required', Rule::in($this->roles())],
         ]);
 
-        User::create($data);
+        $usuario = User::create($data);
+
+        Actividad::registrar(
+            'usuarios',
+            'crear',
+            "Creo el usuario {$usuario->email} con rol {$usuario->role}"
+        );
 
         return redirect()
             ->route('usuarios.index')
@@ -64,6 +71,12 @@ class UsuarioController extends Controller
 
         $usuario->update($data);
 
+        Actividad::registrar(
+            'usuarios',
+            'editar',
+            "Edito el usuario {$usuario->email}"
+        );
+
         return redirect()
             ->route('usuarios.index')
             ->with('status', 'Usuario actualizado correctamente.');
@@ -77,7 +90,14 @@ class UsuarioController extends Controller
                 ->with('status', 'No podes eliminar tu propio usuario.');
         }
 
+        $email = $usuario->email;
         $usuario->delete();
+
+        Actividad::registrar(
+            'usuarios',
+            'eliminar',
+            "Elimino el usuario {$email}"
+        );
 
         return redirect()
             ->route('usuarios.index')

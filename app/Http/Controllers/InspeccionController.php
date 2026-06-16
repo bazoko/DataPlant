@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actividad;
 use App\Models\Inspeccion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -61,7 +62,13 @@ class InspeccionController extends Controller
 
         $data['user_id'] = Auth::id();
 
-        Inspeccion::create($data);
+        $inspeccion = Inspeccion::create($data);
+
+        Actividad::registrar(
+            'inspecciones',
+            'crear',
+            "Creo la inspeccion #{$inspeccion->id} en {$inspeccion->sector}"
+        );
 
         return redirect()
             ->route('inspecciones.index')
@@ -84,6 +91,12 @@ class InspeccionController extends Controller
 
         $inspeccion->update($data);
 
+        Actividad::registrar(
+            'inspecciones',
+            'editar',
+            "Edito la inspeccion #{$inspeccion->id}"
+        );
+
         return redirect()
             ->route('inspecciones.index')
             ->with('status', 'Inspeccion actualizada correctamente.');
@@ -91,7 +104,14 @@ class InspeccionController extends Controller
 
     public function destroy(Inspeccion $inspeccion): RedirectResponse
     {
+        $id = $inspeccion->id;
         $inspeccion->delete();
+
+        Actividad::registrar(
+            'inspecciones',
+            'eliminar',
+            "Elimino la inspeccion #{$id}"
+        );
 
         return redirect()
             ->route('inspecciones.index')

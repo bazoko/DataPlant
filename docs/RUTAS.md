@@ -221,6 +221,18 @@ Acceso: `admin`.
 
 ## Usuarios
 
+### GET /actividad
+
+Controlador: `ActividadController`
+
+Metodo: `index()`
+
+Funcion: listar las ultimas acciones registradas en el sistema.
+
+Vista: `actividad/index.blade.php`
+
+Acceso: `admin`.
+
 ### GET /usuarios
 
 Controlador: `UsuarioController`

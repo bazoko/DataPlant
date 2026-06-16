@@ -55,6 +55,7 @@
                     <a href="{{ route('inspecciones.create') }}">Nueva inspeccion</a>
                 @endif
                 @if (auth()->user()->hasRole('admin'))
+                    <a href="{{ route('actividad.index') }}">Actividad</a>
                     <a href="{{ route('usuarios.index') }}">Usuarios</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}">

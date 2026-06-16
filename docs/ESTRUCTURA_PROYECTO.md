@@ -13,6 +13,7 @@ Archivos actuales:
 - `app/Models/User.php`
 - `app/Models/Medicion.php`
 - `app/Models/Inspeccion.php`
+- `app/Models/Actividad.php`
 
 ### Http/Controllers
 
@@ -21,6 +22,7 @@ Contiene los controladores MVC.
 Archivos actuales:
 
 - `app/Http/Controllers/AuthController.php`
+- `app/Http/Controllers/ActividadController.php`
 - `app/Http/Controllers/HomeController.php`
 - `app/Http/Controllers/MedicionController.php`
 - `app/Http/Controllers/InspeccionController.php`
@@ -63,6 +65,7 @@ Vistas actuales:
 - `usuarios/index.blade.php`
 - `usuarios/create.blade.php`
 - `usuarios/edit.blade.php`
+- `actividad/index.blade.php`
 
 ## routes
 

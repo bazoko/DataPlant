@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InspeccionController;
@@ -53,6 +54,8 @@ Route::middleware('auth')->group(function (): void {
         ->name('inspecciones.destroy');
 
     Route::middleware('role:admin')->group(function (): void {
+        Route::get('/actividad', [ActividadController::class, 'index'])->name('actividad.index');
+
         Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
         Route::get('/usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
         Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');

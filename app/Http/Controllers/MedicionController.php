@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actividad;
 use App\Models\Medicion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -61,7 +62,13 @@ class MedicionController extends Controller
 
         $data['user_id'] = Auth::id();
 
-        Medicion::create($data);
+        $medicion = Medicion::create($data);
+
+        Actividad::registrar(
+            'mediciones',
+            'crear',
+            "Creo la medicion #{$medicion->id} del {$medicion->fecha}"
+        );
 
         return redirect()
             ->route('mediciones.index')
@@ -84,6 +91,12 @@ class MedicionController extends Controller
 
         $medicion->update($data);
 
+        Actividad::registrar(
+            'mediciones',
+            'editar',
+            "Edito la medicion #{$medicion->id}"
+        );
+
         return redirect()
             ->route('mediciones.index')
             ->with('status', 'Medicion actualizada correctamente.');
@@ -91,7 +104,14 @@ class MedicionController extends Controller
 
     public function destroy(Medicion $medicion): RedirectResponse
     {
+        $id = $medicion->id;
         $medicion->delete();
+
+        Actividad::registrar(
+            'mediciones',
+            'eliminar',
+            "Elimino la medicion #{$id}"
+        );
 
         return redirect()
             ->route('mediciones.index')

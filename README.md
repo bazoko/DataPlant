@@ -9,6 +9,7 @@ Aplicacion Laravel MVC para recoleccion y consulta de datos mediante formularios
 - Login de usuarios.
 - Roles basicos: `admin`, `carga`, `consulta`.
 - Gestion basica de usuarios para administradores.
+- Registro de actividad para auditar acciones importantes.
 - Dos formularios funcionales:
   - Mediciones.
   - Inspecciones.

@@ -103,6 +103,13 @@ No puede:
 4. Puede eliminar usuarios.
 5. El sistema evita que el admin elimine su propio usuario.
 
+## Flujo de auditoria
+
+1. Un usuario crea, edita o elimina un registro importante.
+2. El controlador ejecuta la accion solicitada.
+3. El modelo `Actividad` guarda usuario, modulo, accion y descripcion.
+4. El administrador puede consultar el historial desde la seccion Actividad.
+
 ### Consulta
 
 Puede:

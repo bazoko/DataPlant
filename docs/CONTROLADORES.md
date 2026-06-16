@@ -76,6 +76,16 @@ Archivo: `app/Http/Middleware/RoleMiddleware.php`
 
 Responsabilidad: permitir o bloquear rutas segun el rol del usuario autenticado.
 
+## ActividadController
+
+Archivo: `app/Http/Controllers/ActividadController.php`
+
+Responsabilidad: mostrar al administrador el historial de acciones importantes.
+
+Metodos:
+
+- `index()`: obtiene las ultimas 100 actividades y retorna `actividad/index.blade.php`.
+
 ## UsuarioController
 
 Archivo: `app/Http/Controllers/UsuarioController.php`

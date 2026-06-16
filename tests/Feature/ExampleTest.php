@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Actividad;
 use App\Models\Inspeccion;
 use App\Models\Medicion;
 use App\Models\User;
@@ -347,5 +348,50 @@ class ExampleTest extends TestCase
         $response->assertHeader('content-disposition', 'attachment; filename=inspecciones.csv');
         $this->assertStringContainsString('Exportada', $csv);
         $this->assertStringNotContainsString('No exportada', $csv);
+    }
+
+    public function test_creating_medicion_registers_activity(): void
+    {
+        $carga = User::factory()->create(['role' => 'carga']);
+
+        $this->actingAs($carga)
+            ->post('/mediciones', [
+                'fecha' => '2026-06-16',
+                'turno' => 'tarde',
+                'valor' => '30.00',
+                'observacion' => 'Con auditoria',
+            ])
+            ->assertRedirect('/mediciones');
+
+        $this->assertDatabaseHas('actividades', [
+            'user_id' => $carga->id,
+            'modulo' => 'mediciones',
+            'accion' => 'crear',
+        ]);
+    }
+
+    public function test_admin_can_view_activity_log(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        Actividad::create([
+            'user_id' => $admin->id,
+            'modulo' => 'usuarios',
+            'accion' => 'crear',
+            'descripcion' => 'Creo un usuario de prueba',
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/actividad')
+            ->assertOk()
+            ->assertSee('Creo un usuario de prueba');
+    }
+
+    public function test_non_admin_cannot_view_activity_log(): void
+    {
+        $consulta = User::factory()->create(['role' => 'consulta']);
+
+        $this->actingAs($consulta)
+            ->get('/actividad')
+            ->assertForbidden();
     }
 }
