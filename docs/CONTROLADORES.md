@@ -32,7 +32,7 @@ Responsabilidad: administrar el formulario y listado de mediciones.
 
 Metodos:
 
-- `index()`: obtiene mediciones con el usuario que las cargo y retorna `mediciones/index.blade.php`.
+- `index()`: obtiene mediciones con el usuario que las cargo, aplica filtros opcionales y retorna `mediciones/index.blade.php`.
 - `create()`: retorna el formulario `mediciones/create.blade.php`.
 - `store()`: valida datos, asigna el usuario autenticado y guarda la medicion.
 - `edit()`: muestra el formulario de edicion de una medicion.
@@ -54,7 +54,7 @@ Responsabilidad: administrar el formulario y listado de inspecciones.
 
 Metodos:
 
-- `index()`: obtiene inspecciones con el usuario que las cargo y retorna `inspecciones/index.blade.php`.
+- `index()`: obtiene inspecciones con el usuario que las cargo, aplica filtros opcionales y retorna `inspecciones/index.blade.php`.
 - `create()`: retorna el formulario `inspecciones/create.blade.php`.
 - `store()`: valida datos, asigna el usuario autenticado y guarda la inspeccion.
 - `edit()`: muestra el formulario de edicion de una inspeccion.

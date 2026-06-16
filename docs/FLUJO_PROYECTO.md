@@ -30,6 +30,21 @@ Usuarios de prueba:
 7. El modelo guarda el registro en la base de datos.
 8. El sistema redirige al listado.
 
+## Flujo de consulta de datos
+
+1. El usuario entra al listado de mediciones o inspecciones.
+2. Puede completar filtros opcionales.
+3. El navegador envia una solicitud `GET` con parametros.
+4. El controlador aplica los filtros sobre el modelo.
+5. La vista muestra solo los registros encontrados.
+
+## Flujo del dashboard
+
+1. El usuario ingresa al inicio.
+2. `HomeController` consulta totales de mediciones e inspecciones.
+3. Tambien obtiene los ultimos registros cargados.
+4. La vista `home.blade.php` muestra un resumen general del sistema.
+
 ## Flujo interno MVC
 
 ```txt

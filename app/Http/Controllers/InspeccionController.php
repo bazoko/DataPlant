@@ -10,13 +10,19 @@ use Illuminate\View\View;
 
 class InspeccionController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $filters = $request->only(['fecha_desde', 'fecha_hasta', 'sector', 'estado']);
+
         $inspecciones = Inspeccion::with('usuario')
+            ->when($filters['fecha_desde'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '>=', $fecha))
+            ->when($filters['fecha_hasta'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '<=', $fecha))
+            ->when($filters['sector'] ?? null, fn ($query, $sector) => $query->where('sector', 'like', "%{$sector}%"))
+            ->when($filters['estado'] ?? null, fn ($query, $estado) => $query->where('estado', $estado))
             ->latest()
             ->get();
 
-        return view('inspecciones.index', compact('inspecciones'));
+        return view('inspecciones.index', compact('inspecciones', 'filters'));
     }
 
     public function create(): View

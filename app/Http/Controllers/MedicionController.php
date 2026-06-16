@@ -10,13 +10,18 @@ use Illuminate\View\View;
 
 class MedicionController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $filters = $request->only(['fecha_desde', 'fecha_hasta', 'turno']);
+
         $mediciones = Medicion::with('usuario')
+            ->when($filters['fecha_desde'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '>=', $fecha))
+            ->when($filters['fecha_hasta'] ?? null, fn ($query, $fecha) => $query->whereDate('fecha', '<=', $fecha))
+            ->when($filters['turno'] ?? null, fn ($query, $turno) => $query->where('turno', $turno))
             ->latest()
             ->get();
 
-        return view('mediciones.index', compact('mediciones'));
+        return view('mediciones.index', compact('mediciones', 'filters'));
     }
 
     public function create(): View

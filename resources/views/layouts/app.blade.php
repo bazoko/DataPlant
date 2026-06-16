@@ -13,6 +13,10 @@
         main { max-width: 1100px; margin: 0 auto; padding: 24px; }
         h1 { margin-top: 0; font-size: 28px; }
         .panel { background: white; border: 1px solid #d7dde7; padding: 20px; margin-bottom: 18px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
+        .summary-item { background: white; border: 1px solid #d7dde7; padding: 18px; }
+        .summary-number { display: block; font-size: 34px; font-weight: bold; margin-bottom: 4px; }
+        .filter-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: end; }
         .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
         .btn { display: inline-block; background: #2563eb; color: white; padding: 9px 12px; text-decoration: none; border: 0; cursor: pointer; }
         .btn.secondary { background: #475569; }
@@ -31,6 +35,7 @@
             header .bar { align-items: flex-start; flex-direction: column; }
             main { padding: 16px; }
             table { font-size: 14px; }
+            .summary-grid, .filter-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>

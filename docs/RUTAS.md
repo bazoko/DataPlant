@@ -64,6 +64,12 @@ Vista: `mediciones/index.blade.php`
 
 Acceso: `admin`, `carga`, `consulta`.
 
+Filtros disponibles por query string:
+
+- `fecha_desde`
+- `fecha_hasta`
+- `turno`
+
 ### GET /mediciones/create
 
 Controlador: `MedicionController`
@@ -131,6 +137,13 @@ Funcion: listar inspecciones cargadas.
 Vista: `inspecciones/index.blade.php`
 
 Acceso: `admin`, `carga`, `consulta`.
+
+Filtros disponibles por query string:
+
+- `fecha_desde`
+- `fecha_hasta`
+- `sector`
+- `estado`
 
 ### GET /inspecciones/create
 

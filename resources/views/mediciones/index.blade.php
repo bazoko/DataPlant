@@ -11,6 +11,35 @@
         </div>
     @endif
 
+    <form class="panel" method="GET" action="{{ route('mediciones.index') }}">
+        <h2>Filtros</h2>
+        <div class="filter-grid">
+            <div>
+                <label for="fecha_desde">Fecha desde</label>
+                <input id="fecha_desde" name="fecha_desde" type="date" value="{{ $filters['fecha_desde'] ?? '' }}">
+            </div>
+            <div>
+                <label for="fecha_hasta">Fecha hasta</label>
+                <input id="fecha_hasta" name="fecha_hasta" type="date" value="{{ $filters['fecha_hasta'] ?? '' }}">
+            </div>
+            <div>
+                <label for="turno">Turno</label>
+                <select id="turno" name="turno">
+                    <option value="">Todos</option>
+                    <option value="manana" @selected(($filters['turno'] ?? '') === 'manana')>Manana</option>
+                    <option value="tarde" @selected(($filters['turno'] ?? '') === 'tarde')>Tarde</option>
+                    <option value="noche" @selected(($filters['turno'] ?? '') === 'noche')>Noche</option>
+                </select>
+            </div>
+            <div class="actions">
+                <button class="btn" type="submit">Filtrar</button>
+                <a class="btn secondary" href="{{ route('mediciones.index') }}">Limpiar</a>
+            </div>
+        </div>
+    </form>
+
+    <p class="muted">Registros encontrados: {{ $mediciones->count() }}</p>
+
     <table>
         <thead>
             <tr>

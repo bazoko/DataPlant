@@ -178,4 +178,54 @@ class ExampleTest extends TestCase
 
         $this->assertDatabaseMissing('inspecciones', ['id' => $inspeccion->id]);
     }
+
+    public function test_mediciones_can_be_filtered_by_turno(): void
+    {
+        $consulta = User::factory()->create(['role' => 'consulta']);
+        Medicion::create([
+            'fecha' => '2026-06-12',
+            'turno' => 'manana',
+            'valor' => '11.00',
+            'observacion' => 'Visible',
+            'user_id' => $consulta->id,
+        ]);
+        Medicion::create([
+            'fecha' => '2026-06-12',
+            'turno' => 'noche',
+            'valor' => '22.00',
+            'observacion' => 'Oculta',
+            'user_id' => $consulta->id,
+        ]);
+
+        $this->actingAs($consulta)
+            ->get('/mediciones?turno=manana')
+            ->assertOk()
+            ->assertSee('Visible')
+            ->assertDontSee('Oculta');
+    }
+
+    public function test_inspecciones_can_be_filtered_by_estado(): void
+    {
+        $consulta = User::factory()->create(['role' => 'consulta']);
+        Inspeccion::create([
+            'fecha' => '2026-06-12',
+            'sector' => 'Deposito',
+            'estado' => 'correcto',
+            'observacion' => 'Visible',
+            'user_id' => $consulta->id,
+        ]);
+        Inspeccion::create([
+            'fecha' => '2026-06-12',
+            'sector' => 'Planta',
+            'estado' => 'critico',
+            'observacion' => 'Oculta',
+            'user_id' => $consulta->id,
+        ]);
+
+        $this->actingAs($consulta)
+            ->get('/inspecciones?estado=correcto')
+            ->assertOk()
+            ->assertSee('Visible')
+            ->assertDontSee('Oculta');
+    }
 }

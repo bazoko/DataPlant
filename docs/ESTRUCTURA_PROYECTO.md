@@ -52,7 +52,7 @@ Vistas actuales:
 
 - `auth/login.blade.php`
 - `layouts/app.blade.php`
-- `home.blade.php`
+- `home.blade.php`, dashboard con totales y ultimos registros.
 - `mediciones/index.blade.php`
 - `mediciones/create.blade.php`
 - `mediciones/edit.blade.php`
