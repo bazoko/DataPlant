@@ -16,6 +16,7 @@ Aplicacion Laravel MVC para recoleccion y consulta de datos mediante formularios
 - Exportacion CSV de mediciones e inspecciones.
 - Navegacion simple entre pantallas.
 - Documentacion en `docs/`.
+- Datos de prueba para probar filtros y exportaciones.
 
 ## Instalacion
 
@@ -63,4 +64,17 @@ Todos usan la contrasena `password`.
 php artisan route:list
 php artisan migrate:fresh --seed
 php artisan test
+```
+
+## Datos de prueba
+
+El seeder crea usuarios y registros ficticios para probar el sistema:
+
+- 18 mediciones con fechas, turnos y valores distintos.
+- 18 inspecciones con sectores y estados distintos.
+
+Para recargar todo desde cero:
+
+```bash
+php artisan migrate:fresh --seed
 ```
