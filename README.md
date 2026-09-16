@@ -29,6 +29,7 @@ El primer corte incluye:
 - `measurements`
 - `activity_logs`
 - usuarios demo
+- carga e historial de mediciones con filtros
 
 Los datos de prueba son ficticios y seguros para portfolio.
 
@@ -82,6 +83,10 @@ Abrir:
 http://127.0.0.1:8000
 ```
 
+El dashboard requiere iniciar sesion. El acceso de usuarios se controla con roles y permisos de Spatie.
+
+El modulo inicial de mediciones permite registrar datos de Efluentes / PTAR, respetando variables diarias, por turno u horarias. Cada registro guarda el usuario, fecha, hora, unidad, observacion y estado respecto de sus limites.
+
 ## Usuarios demo
 
 Todos usan la contrasena `password`.
@@ -91,7 +96,7 @@ Todos usan la contrasena `password`.
 | Administrador | `admin@dataplant.test` |
 | Responsable de turno | `operario@dataplant.test` |
 
-Los roles todavia no estan implementados formalmente; se incorporaran con un paquete profesional de permisos.
+El administrador puede consultar `/usuarios`. El responsable de turno puede acceder al dashboard, pero no administrar usuarios.
 
 ## Permisos profesionales
 
@@ -126,6 +131,10 @@ Permisos iniciales:
 ```bash
 php artisan test
 ```
+
+## Documentacion guiada
+
+La carpeta [`docs/`](docs/README.md) explica la estructura del proyecto, los flujos de autenticacion y autorizacion, el recorrido de una medicion, las rutas actuales y la matriz de roles y permisos.
 
 ## Portfolio GitHub
 
