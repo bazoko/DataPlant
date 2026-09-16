@@ -2,94 +2,177 @@
 
 namespace Database\Seeders;
 
-use App\Models\Inspeccion;
-use App\Models\Medicion;
+use App\Models\Area;
+use App\Models\Measurement;
+use App\Models\MeasurementFrequency;
+use App\Models\MeasurementVariable;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
-        $users = [
-            ['name' => 'Administrador', 'email' => 'admin@example.com', 'role' => 'admin'],
-            ['name' => 'Usuario Carga', 'email' => 'carga@example.com', 'role' => 'carga'],
-            ['name' => 'Usuario Consulta', 'email' => 'consulta@example.com', 'role' => 'consulta'],
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $permissions = [
+            'areas.view',
+            'areas.manage',
+            'measurements.view',
+            'measurements.create',
+            'dashboard.view',
+            'users.manage',
+            'roles.manage',
+            'audit.view',
         ];
 
-        foreach ($users as $user) {
-            User::updateOrCreate(['email' => $user['email']], [
-                'name' => $user['name'],
-                'password' => Hash::make('password'),
-                'role' => $user['role'],
+        $permissionModels = collect($permissions)
+            ->mapWithKeys(fn (string $permission): array => [
+                $permission => Permission::findOrCreate($permission, 'web'),
             ]);
+
+        $adminRole = Role::findOrCreate('admin', 'web');
+        $adminRole->givePermissionTo($permissionModels->values());
+
+        $supervisorRole = Role::findOrCreate('supervisor', 'web');
+        $supervisorRole->givePermissionTo($permissionModels->only([
+            'areas.view',
+            'measurements.view',
+            'dashboard.view',
+            'audit.view',
+        ])->values());
+
+        $operarioRole = Role::findOrCreate('operario', 'web');
+        $operarioRole->givePermissionTo($permissionModels->only([
+            'areas.view',
+            'measurements.view',
+            'measurements.create',
+            'dashboard.view',
+        ])->values());
+
+        $consultaRole = Role::findOrCreate('consulta', 'web');
+        $consultaRole->givePermissionTo($permissionModels->only([
+            'areas.view',
+            'measurements.view',
+            'dashboard.view',
+        ])->values());
+
+        $admin = User::factory()->create([
+            'name' => 'Administrador DataPlant',
+            'email' => 'admin@dataplant.test',
+            'password' => 'password',
+        ]);
+        $admin->assignRole($adminRole);
+
+        $operario = User::factory()->create([
+            'name' => 'Responsable Turno',
+            'email' => 'operario@dataplant.test',
+            'password' => 'password',
+        ]);
+        $operario->assignRole($operarioRole);
+
+        $efluentes = Area::create([
+            'name' => 'Efluentes / PTAR',
+            'slug' => 'efluentes-ptar',
+            'description' => 'Area inicial para seguimiento de variables ambientales y operativas.',
+        ]);
+
+        $daily = MeasurementFrequency::create([
+            'name' => 'Diaria',
+            'code' => 'daily',
+            'description' => 'Una medicion por dia.',
+            'expected_per_day' => 1,
+        ]);
+
+        $perShift = MeasurementFrequency::create([
+            'name' => 'Por turno',
+            'code' => 'per_shift',
+            'description' => 'Una medicion esperada por cada turno de trabajo.',
+            'requires_shift' => true,
+            'expected_per_day' => 3,
+        ]);
+
+        $hourly = MeasurementFrequency::create([
+            'name' => 'Horaria',
+            'code' => 'hourly',
+            'description' => 'Mediciones repetidas durante el dia.',
+            'expected_per_day' => 24,
+        ]);
+
+        $variables = collect([
+            ['frequency' => $hourly, 'name' => 'Caudal entrada arroyo', 'slug' => 'caudal-entrada-arroyo', 'unit' => 'm3/h', 'min_value' => 0, 'max_value' => 120],
+            ['frequency' => $hourly, 'name' => 'Salida Parshall', 'slug' => 'salida-parshall', 'unit' => 'm3/h', 'min_value' => 0, 'max_value' => 120],
+            ['frequency' => $perShift, 'name' => 'DQO vertido', 'slug' => 'dqo-vertido', 'unit' => 'ppm', 'min_value' => 0, 'max_value' => 900],
+            ['frequency' => $perShift, 'name' => 'SST salida', 'slug' => 'sst-salida', 'unit' => 'ppm', 'min_value' => 0, 'max_value' => 500],
+            ['frequency' => $daily, 'name' => 'M3/Ton diario', 'slug' => 'm3-ton-diario', 'unit' => 'm3/ton', 'min_value' => 0, 'max_value' => 20],
+        ])->map(fn (array $data): MeasurementVariable => MeasurementVariable::create([
+            'area_id' => $efluentes->id,
+            'measurement_frequency_id' => $data['frequency']->id,
+            'name' => $data['name'],
+            'slug' => $data['slug'],
+            'unit' => $data['unit'],
+            'min_value' => $data['min_value'],
+            'max_value' => $data['max_value'],
+        ]));
+
+        $start = Carbon::create(2026, 9, 1, 8);
+
+        foreach (range(0, 6) as $dayOffset) {
+            $date = $start->copy()->addDays($dayOffset);
+
+            foreach ($variables as $variable) {
+                $frequency = $variable->frequency->code;
+
+                if ($frequency === 'hourly') {
+                    foreach ([6, 14, 22] as $hour) {
+                        $this->createMeasurement($variable, $operario, $date->copy()->setTime($hour, 0), null);
+                    }
+
+                    continue;
+                }
+
+                if ($frequency === 'per_shift') {
+                    foreach (['manana', 'tarde', 'noche'] as $index => $shift) {
+                        $this->createMeasurement($variable, $operario, $date->copy()->setTime(8 + ($index * 8), 0), $shift);
+                    }
+
+                    continue;
+                }
+
+                $this->createMeasurement($variable, $admin, $date->copy()->setTime(10, 0), null);
+            }
         }
+    }
 
-        $carga = User::where('email', 'carga@example.com')->first();
+    private function createMeasurement(MeasurementVariable $variable, User $user, Carbon $measuredAt, ?string $shift): void
+    {
+        $base = match ($variable->slug) {
+            'caudal-entrada-arroyo' => 42,
+            'salida-parshall' => 38,
+            'dqo-vertido' => 420,
+            'sst-salida' => 210,
+            'm3-ton-diario' => 8,
+            default => 10,
+        };
 
-        $mediciones = [
-            ['2026-06-01', 'manana', 12.50, 'Temperatura estable en sector norte'],
-            ['2026-06-01', 'tarde', 18.20, 'Aumento leve durante el turno tarde'],
-            ['2026-06-02', 'noche', 9.75, 'Lectura nocturna dentro del rango'],
-            ['2026-06-03', 'manana', 14.10, 'Control inicial sin observaciones'],
-            ['2026-06-04', 'tarde', 21.35, 'Pico registrado cerca del cierre'],
-            ['2026-06-05', 'noche', 8.90, 'Valor bajo esperado por horario'],
-            ['2026-06-06', 'manana', 16.45, 'Medicion tomada despues de mantenimiento'],
-            ['2026-06-07', 'tarde', 19.80, 'Condiciones normales de operacion'],
-            ['2026-06-08', 'noche', 10.25, 'Sin variaciones relevantes'],
-            ['2026-06-09', 'manana', 13.70, 'Control de rutina'],
-            ['2026-06-10', 'tarde', 23.15, 'Valor alto para seguimiento'],
-            ['2026-06-11', 'noche', 11.60, 'Lectura estable'],
-            ['2026-06-12', 'manana', 15.90, 'Registro posterior a calibracion'],
-            ['2026-06-13', 'tarde', 20.40, 'Turno con mayor carga operativa'],
-            ['2026-06-14', 'noche', 7.85, 'Valor minimo de la semana'],
-            ['2026-06-15', 'manana', 17.25, 'Equipo funcionando correctamente'],
-            ['2026-06-16', 'tarde', 22.70, 'Control con observacion menor'],
-            ['2026-06-17', 'noche', 12.05, 'Cierre de jornada sin incidentes'],
-        ];
-
-        foreach ($mediciones as [$fecha, $turno, $valor, $observacion]) {
-            Medicion::updateOrCreate([
-                'fecha' => $fecha,
-                'turno' => $turno,
-                'valor' => $valor,
-            ], [
-                'observacion' => $observacion,
-                'user_id' => $carga->id,
-            ]);
-        }
-
-        $inspecciones = [
-            ['2026-06-01', 'Planta principal', 'correcto', 'Recorrido sin hallazgos'],
-            ['2026-06-02', 'Deposito', 'observado', 'Se detecta material fuera de lugar'],
-            ['2026-06-03', 'Sala de bombas', 'critico', 'Perdida visible en conexion secundaria'],
-            ['2026-06-04', 'Laboratorio', 'correcto', 'Instrumentos ordenados y limpios'],
-            ['2026-06-05', 'Patio exterior', 'observado', 'Zona con acumulacion de residuos'],
-            ['2026-06-06', 'Oficina tecnica', 'correcto', 'Documentacion disponible'],
-            ['2026-06-07', 'Camara fria', 'critico', 'Puerta no cierra correctamente'],
-            ['2026-06-08', 'Linea 1', 'correcto', 'Protecciones en buen estado'],
-            ['2026-06-09', 'Linea 2', 'observado', 'Ruido inusual en motor'],
-            ['2026-06-10', 'Taller', 'correcto', 'Herramientas almacenadas correctamente'],
-            ['2026-06-11', 'Vestuario', 'observado', 'Falta reposicion de insumos'],
-            ['2026-06-12', 'Comedor', 'correcto', 'Condiciones adecuadas'],
-            ['2026-06-13', 'Tablero electrico', 'critico', 'Senalizacion incompleta'],
-            ['2026-06-14', 'Entrada de carga', 'observado', 'Demarcacion desgastada'],
-            ['2026-06-15', 'Archivo', 'correcto', 'Sector limpio y accesible'],
-            ['2026-06-16', 'Azotea', 'observado', 'Canaleta parcialmente obstruida'],
-            ['2026-06-17', 'Generador', 'critico', 'Nivel de combustible bajo'],
-            ['2026-06-18', 'Recepcion', 'correcto', 'Sin observaciones'],
-        ];
-
-        foreach ($inspecciones as [$fecha, $sector, $estado, $observacion]) {
-            Inspeccion::updateOrCreate([
-                'fecha' => $fecha,
-                'sector' => $sector,
-            ], [
-                'estado' => $estado,
-                'observacion' => $observacion,
-                'user_id' => $carga->id,
-            ]);
-        }
+        Measurement::create([
+            'measurement_variable_id' => $variable->id,
+            'user_id' => $user->id,
+            'measured_at' => $measuredAt,
+            'measured_date' => $measuredAt->toDateString(),
+            'shift' => $shift,
+            'value' => $base + random_int(-5, 5),
+            'observation' => 'Dato ficticio de demo DataPlant.',
+        ]);
     }
 }

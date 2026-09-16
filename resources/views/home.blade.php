@@ -1,87 +1,80 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataPlant</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f7f6; color: #17211f; }
+        header { background: #10352f; color: #fff; padding: 22px 32px; }
+        main { max-width: 1100px; margin: 0 auto; padding: 28px; }
+        h1 { margin: 0 0 6px; font-size: 34px; }
+        h2 { margin-top: 0; font-size: 20px; }
+        .subtitle { margin: 0; color: #c6d8d3; }
+        .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 24px 0; }
+        .panel, .metric { background: #fff; border: 1px solid #d9e3e0; border-radius: 6px; padding: 18px; }
+        .metric strong { display: block; font-size: 32px; margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td { border-bottom: 1px solid #d9e3e0; padding: 11px; text-align: left; }
+        th { background: #e8efed; }
+        .muted { color: #63746f; }
+        @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } main { padding: 18px; } }
+    </style>
+</head>
+<body>
+<header>
+    <h1>DataPlant</h1>
+    <p class="subtitle">Sistema industrial de mediciones, auditoria y tableros operativos.</p>
+</header>
 
-@section('title', 'Inicio - Sistema de formularios')
-
-@section('content')
-    <h1>Inicio</h1>
-
-    <section class="panel">
-        <p>Bienvenido, {{ auth()->user()->name }}.</p>
-        <p class="muted">Rol actual: {{ auth()->user()->role }}</p>
-    </section>
-
-    <section class="summary-grid">
-        <div class="summary-item">
-            <span class="summary-number">{{ $totalMediciones }}</span>
-            <span>Mediciones cargadas</span>
+<main>
+    <section class="grid">
+        <div class="metric">
+            <strong>{{ $areaCount }}</strong>
+            <span>Areas activas</span>
         </div>
-        <div class="summary-item">
-            <span class="summary-number">{{ $totalInspecciones }}</span>
-            <span>Inspecciones cargadas</span>
+        <div class="metric">
+            <strong>{{ $variableCount }}</strong>
+            <span>Variables definidas</span>
         </div>
-    </section>
-
-    <section class="panel">
-        <h2>Modulos disponibles</h2>
-        <div class="actions">
-            <a class="btn" href="{{ route('mediciones.index') }}">Ver mediciones</a>
-            <a class="btn secondary" href="{{ route('inspecciones.index') }}">Ver inspecciones</a>
+        <div class="metric">
+            <strong>{{ $measurementCount }}</strong>
+            <span>Mediciones registradas</span>
         </div>
     </section>
 
     <section class="panel">
         <h2>Ultimas mediciones</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Turno</th>
-                    <th>Valor</th>
-                    <th>Cargado por</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($ultimasMediciones as $medicion)
-                    <tr>
-                        <td>{{ $medicion->fecha }}</td>
-                        <td>{{ $medicion->turno }}</td>
-                        <td>{{ $medicion->valor }}</td>
-                        <td>{{ $medicion->usuario?->name ?: '-' }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4">Todavia no hay mediciones cargadas.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </section>
 
-    <section class="panel">
-        <h2>Ultimas inspecciones</h2>
         <table>
             <thead>
                 <tr>
                     <th>Fecha</th>
-                    <th>Sector</th>
-                    <th>Estado</th>
-                    <th>Cargado por</th>
+                    <th>Area</th>
+                    <th>Variable</th>
+                    <th>Valor</th>
+                    <th>Turno</th>
+                    <th>Responsable</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse ($ultimasInspecciones as $inspeccion)
+                @forelse ($latestMeasurements as $measurement)
                     <tr>
-                        <td>{{ $inspeccion->fecha }}</td>
-                        <td>{{ $inspeccion->sector }}</td>
-                        <td>{{ $inspeccion->estado }}</td>
-                        <td>{{ $inspeccion->usuario?->name ?: '-' }}</td>
+                        <td>{{ $measurement->measured_at->format('Y-m-d H:i') }}</td>
+                        <td>{{ $measurement->variable->area->name }}</td>
+                        <td>{{ $measurement->variable->name }}</td>
+                        <td>{{ $measurement->value }} {{ $measurement->variable->unit }}</td>
+                        <td>{{ $measurement->shift ?: 'No aplica' }}</td>
+                        <td>{{ $measurement->user?->name ?: 'Sistema' }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4">Todavia no hay inspecciones cargadas.</td>
+                        <td colspan="6" class="muted">Todavia no hay mediciones. Ejecuta los seeders para cargar datos ficticios.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </section>
-@endsection
+</main>
+</body>
+</html>

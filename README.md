@@ -1,81 +1,139 @@
-# Sistema de formularios Laravel
+# DataPlant
 
-Aplicacion Laravel MVC para recoleccion y consulta de datos mediante formularios.
+DataPlant es una aplicacion Laravel para registrar, organizar y visualizar mediciones operativas de una fabrica tipo Softys.
 
-## Funcionalidades actuales
+El objetivo es reemplazar planillas dispersas por una base de datos estructurada con usuarios, areas, variables, frecuencias de medicion, auditoria y tableros operativos.
 
-- Proyecto Laravel funcionando.
-- Base de datos SQLite configurada.
-- Login de usuarios.
-- Roles basicos: `admin`, `carga`, `consulta`.
-- Gestion basica de usuarios para administradores.
-- Registro de actividad para auditar acciones importantes.
-- Dos formularios funcionales:
-  - Mediciones.
-  - Inspecciones.
-- Listados para consultar datos cargados.
-- Exportacion CSV de mediciones e inspecciones.
-- Navegacion simple entre pantallas.
-- Documentacion en `docs/`.
-- Datos de prueba para probar filtros y exportaciones.
+## Enfoque actual
 
-## Instalacion
+Este repositorio se reinicio desde cero. El proyecto anterior quedo guardado en `ejemplo/` solo como referencia.
+
+Decisiones base:
+
+- Laravel MVC.
+- Base de datos principal: MySQL.
+- Primer modulo industrial: Efluentes / PTAR.
+- Areas como agrupacion principal.
+- Sin division obligatoria en lineas y sectores.
+- Frecuencias flexibles: diaria, por turno, horaria y personalizada.
+- LILA queda para una etapa futura.
+- Roles/permisos profesionales con `spatie/laravel-permission`.
+
+## Modelo inicial
+
+El primer corte incluye:
+
+- `areas`
+- `measurement_frequencies`
+- `measurement_variables`
+- `measurements`
+- `activity_logs`
+- usuarios demo
+
+Los datos de prueba son ficticios y seguros para portfolio.
+
+## Requisitos
+
+- PHP 8.3+
+- Composer
+- Node.js y npm
+- MySQL
+
+## Configuracion
 
 ```bash
 composer install
 copy .env.example .env
 php artisan key:generate
+```
+
+Crear una base MySQL llamada:
+
+```text
+dataplant
+```
+
+Configurar `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=dataplant
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Migrar y cargar datos ficticios:
+
+```bash
 php artisan migrate --seed
+```
+
+Levantar:
+
+```bash
 php artisan serve
 ```
 
-En Windows PowerShell, si la base SQLite no existe:
+Abrir:
 
-```powershell
-New-Item -ItemType File database/database.sqlite
-php artisan migrate --seed
+```text
+http://127.0.0.1:8000
 ```
 
-## Usuarios de prueba
+## Usuarios demo
 
 Todos usan la contrasena `password`.
 
-| Rol | Email |
+| Rol conceptual | Email |
 | --- | --- |
-| Admin | `admin@example.com` |
-| Carga | `carga@example.com` |
-| Consulta | `consulta@example.com` |
+| Administrador | `admin@dataplant.test` |
+| Responsable de turno | `operario@dataplant.test` |
 
-## Roles
+Los roles todavia no estan implementados formalmente; se incorporaran con un paquete profesional de permisos.
 
-- `admin`: puede ver y cargar datos.
-- `carga`: puede ver y cargar datos.
-- `consulta`: solo puede ver datos.
+## Permisos profesionales
 
-## Documentacion
+La opcion elegida es `spatie/laravel-permission`.
 
-- `docs/RUTAS.md`
-- `docs/CONTROLADORES.md`
-- `docs/FLUJO_PROYECTO.md`
-- `docs/ESTRUCTURA_PROYECTO.md`
-
-## Comandos utiles
+Ya esta instalado y publicado. Despues de instalar dependencias en un entorno nuevo, ejecutar:
 
 ```bash
-php artisan route:list
-php artisan migrate:fresh --seed
+php artisan migrate
+```
+
+Roles iniciales:
+
+- `admin`
+- `supervisor`
+- `operario`
+- `consulta`
+
+Permisos iniciales:
+
+- `areas.view`
+- `areas.manage`
+- `measurements.view`
+- `measurements.create`
+- `dashboard.view`
+- `users.manage`
+- `roles.manage`
+- `audit.view`
+
+## Verificacion
+
+```bash
 php artisan test
 ```
 
-## Datos de prueba
+## Portfolio GitHub
 
-El seeder crea usuarios y registros ficticios para probar el sistema:
+Este proyecto esta pensado para quedar prolijo en GitHub y servir como muestra profesional:
 
-- 18 mediciones con fechas, turnos y valores distintos.
-- 18 inspecciones con sectores y estados distintos.
-
-Para recargar todo desde cero:
-
-```bash
-php artisan migrate:fresh --seed
-```
+- README claro.
+- Datos ficticios.
+- Sin `.env`.
+- Sin `vendor/` ni `node_modules/`.
+- Commits descriptivos.
+- Explicacion del problema industrial que resuelve.
